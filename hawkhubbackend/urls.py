@@ -21,7 +21,10 @@ from django.conf.urls.static  import static
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path('api/', include("hawkhubapp.urls")),
+    #path('api/', include("hawkhubapp.urls")),
+    path('api/products/', include('hawkhubapp.urls.product_urls')),
+    path('api/users/', include('hawkhubapp.urls.user_urls')),
+    path('api/orders/', include('hawkhubapp.urls.order_urls')),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) #added. This is for serving media files during development (DEBUG=True)

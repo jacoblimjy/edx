@@ -1,29 +1,34 @@
 import React, {useState, useEffect} from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Col, Row } from "react-bootstrap";
 import Product from "../components/Product";
-import axios from "axios";
+import { listProducts } from "../actions/productActions"; //listProducts is in curly braces because it is not the default export, it is a named export
+import Loader from "../components/Loader";
+import Message from "../components/Message";
 
 function Homescreen() {
-    const [products, setProducts] = useState([]); //this creates a state variable called products and a function called setProducts to update the state variable
-    useEffect(() => {
-        async function fetchProducts() { //async function to fetch products
-        const { data } = await axios.get('/api/products/') //await returns the promise's result when it resolves
-        setProducts(data) //set the products state variable to the data
-        }
+    const dispatch = useDispatch() //useDispatch is a hook that gives us access to the dispatch function, we can use it to dispatch actions, dispatch means to send out
+    const productList = useSelector(state => state.productList) //get the productList from the state, state is the global state of the app, which is stored in the redux store, a state is a snapshot of the app at a given time
+    const { loading, error, products } = productList //destructure the productList object into loading, error, and products
 
-        fetchProducts()
+    useEffect(() => {
+        dispatch(listProducts())
     }, [])
-  return (
-    <div>
-      <h1>Welcome</h1>
-      <h3>Latest Products</h3>
-      <Row>
-        {products.map((product) => (
-          <Col key={product.id} sm={12} md={6} lg={4} xl={3}>
-            <Product product={product} />
-          </Col>
-        ))}
-      </Row>
+
+    return (
+      <div>
+        <h1>Lastest Products</h1>
+        {loading ? <Loader />
+          : error ? <Message variant='danger'>{error}</Message> //if there is an error, display the error message
+            :
+            <Row>
+              {products.map((product) => (
+                <Col key={product.id} sm={12} md={6} lg={4} xl={3}>
+                  <Product product={product} />
+                </Col>
+              ))}
+            </Row>
+  }
     </div>
   );
 }
